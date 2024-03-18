@@ -10,21 +10,21 @@ st.title("Crypto Trading Bot ni Kent")
 # Defining ticker variables
 Bitcoin ='BTC-USD'
 Ethereum = 'ETH-USD'
-Litecoin = 'LTC-USD'
+Solana = 'SOL-USD'
 
 # Accessing data from Yahoo Finance
 BTC_Data = yf.Ticker(Bitcoin)
 ETH_Data = yf.Ticker(Ethereum)
-LTC_Data = yf.Ticker(Litecoin)
+SOL_Data = yf.Ticker(Solana)
 
 # Fetch history data from Yahoo Finance
 BTCHis = BTC_Data.history(period="max")
 ETHHis = ETH_Data.history(period="max")
-LTCHis = LTC_Data.history(period="max")
+SOLHis = SOL_Data.history(period="max")
 
 BTC = yf.download(Bitcoin, start="2024-03-01", end="2024-03-18")
 ETH = yf.download(Ethereum, start="2024-03-01", end="2024-03-18")
-LTC = yf.download(Litecoin, start="2024-03-01", end="2024-03-18")
+SOL = yf.download(Solana, start="2024-03-01", end="2024-03-18")
 
 # Function to format the date column without time
 def format_date_column(data):
@@ -36,7 +36,7 @@ def format_date_column(data):
 # Formatting date columns for each cryptocurrency
 BTC = format_date_column(BTC)
 ETH = format_date_column(ETH)
-LTC = format_date_column(LTC)
+SOL = format_date_column(SOL)
 # Function to determine Buy or Sell based on the trend
 def determine_action(data):
     change = data['Close'].iloc[-1] - data['Close'].iloc[0]
@@ -67,12 +67,12 @@ st.line_chart(ETH['Close'])
 eth_action = determine_action(ETH)
 st.markdown(eth_action, unsafe_allow_html=True)
 
-# Litecoin
-st.write("Litecoin ($)")
+# Solana
+st.write("Solana ($)")
 # Display dataframe
-st.table(LTC)
+st.table(SOL)
 # Display a chart
-st.line_chart(LTC['Close'])
+st.line_chart(SOL['Close'])
 # Determine and display Buy/Sell action for Litecoin
-ltc_action = determine_action(LTC)
+ltc_action = determine_action(SOL)
 st.markdown(ltc_action, unsafe_allow_html=True)
