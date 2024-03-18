@@ -22,9 +22,9 @@ BTCHis = BTC_Data.history(period="max")
 ETHHis = ETH_Data.history(period="max")
 LTCHis = LTC_Data.history(period="max")
 
-BTC = yf.download(Bitcoin, start="2024-01-01", end="2024-03-18")
-ETH = yf.download(Ethereum, start="2024-01-01", end="2024-03-18")
-LTC = yf.download(Litecoin, start="2024-01-01", end="2024-03-18")
+BTC = yf.download(Bitcoin, start="2024-03-01", end="2024-03-18")
+ETH = yf.download(Ethereum, start="2024-03-01", end="2024-03-18")
+LTC = yf.download(Litecoin, start="2024-03-01", end="2024-03-18")
 
 # Function to format the date column without time
 def format_date_column(data):
