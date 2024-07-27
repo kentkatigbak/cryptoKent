@@ -9,7 +9,7 @@ st.set_page_config(page_title="KentTrades", layout="wide",page_icon="💰")
 # Titles and subtitles
 with st.sidebar:
     st.write("")
-    st.image("tradebot/myLogo.png")
+    st.image("tradebot/logoWhiteBG.png")
     st.title("")
     st.title("")
     st.title("")
