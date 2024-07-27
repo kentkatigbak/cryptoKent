@@ -13,14 +13,7 @@ st.title("Crypto Trading Bot ni Kent")
 cryptos = {
     'Bitcoin': 'BTC-USD',
     'Ethereum': 'ETH-USD',
-    'Solana': 'SOL-USD',
-    'BNB': 'BNB-USD',
-    'XRP': 'XRP-USD',
-    'DOGE': 'DOGE-USD',
-    'TRX': 'TRX-USD',
-    'DOT': 'DOT-USD',
-    'ATOM': 'ATOM-USD',
-    'MKR': 'MKR-USD'
+    'Solana': 'SOL-USD'
 }
 
 # Selectbox for choosing cryptocurrency
@@ -53,10 +46,25 @@ def format_date_column(data):
 # Formatting date column
 data = format_date_column(data)
 
+# Function to determine Buy or Sell based on the trend
+def determine_action(data):
+    change = data['Close'].iloc[-1] - data['Close'].iloc[0]
+    if change > 0:
+        return "<div style='border:1px solid black;padding:10px;color:green;text-align:center;font-weight:bold'>Sell</div>"
+    elif change < 0:
+        return "<div style='border:1px solid black;padding:10px;color:red;text-align:center;font-weight:bold'>Buy</div>"
+    else:
+        return "<div style='border:1px solid black;padding:10px;color:blue;text-align:center;font-weight:bold'>Hold</div>"
+
 # Display selected cryptocurrency data
 st.write(f"{selected_crypto} ($)")
 # Display dataframe
 st.table(data)
+# Display a chart
+st.line_chart(data['Close'])
+# Determine and display Buy/Sell action for selected cryptocurrency
+action = determine_action(data)
+st.markdown(action, unsafe_allow_html=True)
 
 # Add a download button for the data
 csv = data.to_csv(index=True)
@@ -66,3 +74,4 @@ st.download_button(
     file_name=f"{selected_crypto}_data.csv",
     mime="text/csv"
 )
+
