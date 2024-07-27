@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Streamlit Configurations
-st.set_page_config(page_title="KentTrades", layout="wide")
+st.set_page_config(page_title="KentBot", layout="wide")
 
 # Titles and subtitles
-st.title("Kent Crypto Data Mining")
+st.title("Crypto Trading Bot ni Kent")
 
 # Define the list of cryptocurrencies
 cryptos = {
@@ -69,7 +69,7 @@ def descriptive_statistics(df):
     
     # Transpose the DataFrame to match the format of the data table
     stats = stats.T
-    stats.columns = ['Value']  # Set column name for clarity
+    stats.columns = ['Value'] * len(stats.columns)  # Correctly set column names
     
     return stats
 
