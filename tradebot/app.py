@@ -64,13 +64,12 @@ def descriptive_statistics(df):
     stats['Variance'] = df.var()
     stats['Std Dev'] = df.std()
     
-    # Drop 'Min' and 'Max' columns from the final output
-    stats = stats.drop(['Min', 'Max'], axis=1)
+    # Drop 'Max Date' and 'Min Date' columns from the final output
+    stats = stats.drop(['Max Date', 'Min Date'], axis=1, errors='ignore')
     
     # Transpose the DataFrame to match the format of the data table
     stats = stats.T
-    stats = stats.applymap(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x)  # Format numerical values
-    stats.columns = ['Value']  # Set a single column name
+    stats.columns = ['Value']  # Set a single column name for clarity
     
     return stats
 
