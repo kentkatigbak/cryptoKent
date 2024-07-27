@@ -64,12 +64,11 @@ def descriptive_statistics(df):
     stats['Variance'] = df.var()
     stats['Std Dev'] = df.std()
     
-    # Drop 'Max Date' and 'Min Date' columns from the final output
-    stats = stats.drop(['Max Date', 'Min Date'], axis=1, errors='ignore')
-    
-    # Transpose the DataFrame to match the format of the data table
-    stats = stats.T
-    stats.columns = ['Value']  # Set a single column name for clarity
+    # Date of max and min values
+    max_date = df.idxmax()
+    min_date = df.idxmin()
+    stats['Max Date'] = max_date
+    stats['Min Date'] = min_date
     
     return stats
 
