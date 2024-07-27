@@ -1,5 +1,6 @@
 import yfinance as yf
 import streamlit as st
+from datetime import datetime, timedelta
 
 # Streamlit Configurations
 st.set_page_config(page_title="KentBot", layout="wide")
@@ -8,9 +9,17 @@ st.set_page_config(page_title="KentBot", layout="wide")
 st.title("Crypto Trading Bot ni Kent")
 
 # Defining ticker variables
-Bitcoin ='BTC-USD'
+Bitcoin = 'BTC-USD'
 Ethereum = 'ETH-USD'
 Solana = 'SOL-USD'
+
+# Calculate the dates for the past 60 days
+end_date = datetime.now()
+start_date = end_date - timedelta(days=60)
+
+# Convert dates to string format for Yahoo Finance
+start_date_str = start_date.strftime('%Y-%m-%d')
+end_date_str = end_date.strftime('%Y-%m-%d')
 
 # Accessing data from Yahoo Finance
 BTC_Data = yf.Ticker(Bitcoin)
@@ -18,13 +27,9 @@ ETH_Data = yf.Ticker(Ethereum)
 SOL_Data = yf.Ticker(Solana)
 
 # Fetch history data from Yahoo Finance
-BTCHis = BTC_Data.history(period="max")
-ETHHis = ETH_Data.history(period="max")
-SOLHis = SOL_Data.history(period="max")
-
-BTC = yf.download(Bitcoin, start="2024-03-01", end="2024-03-18")
-ETH = yf.download(Ethereum, start="2024-03-01", end="2024-03-18")
-SOL = yf.download(Solana, start="2024-03-01", end="2024-03-18")
+BTC = yf.download(Bitcoin, start=start_date_str, end=end_date_str)
+ETH = yf.download(Ethereum, start=start_date_str, end=end_date_str)
+SOL = yf.download(Solana, start=start_date_str, end=end_date_str)
 
 # Function to format the date column without time
 def format_date_column(data):
@@ -37,6 +42,7 @@ def format_date_column(data):
 BTC = format_date_column(BTC)
 ETH = format_date_column(ETH)
 SOL = format_date_column(SOL)
+
 # Function to determine Buy or Sell based on the trend
 def determine_action(data):
     change = data['Close'].iloc[-1] - data['Close'].iloc[0]
@@ -73,6 +79,6 @@ st.write("Solana ($)")
 st.table(SOL)
 # Display a chart
 st.line_chart(SOL['Close'])
-# Determine and display Buy/Sell action for Litecoin
-ltc_action = determine_action(SOL)
-st.markdown(ltc_action, unsafe_allow_html=True)
+# Determine and display Buy/Sell action for Solana
+sol_action = determine_action(SOL)
+st.markdown(sol_action, unsafe_allow_html=True)
