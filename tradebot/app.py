@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Streamlit Configurations
-st.set_page_config(page_title="KentBot", layout="wide")
+st.set_page_config(page_title="KentTrades", layout="wide")
 
 # Titles and subtitles
-st.title("Crypto Trading Bot ni Kent")
+st.title("Kent's Crypto Data Mining")
 
 # Define the list of cryptocurrencies
 cryptos = {
