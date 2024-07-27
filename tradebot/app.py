@@ -1,7 +1,5 @@
 import yfinance as yf
 import streamlit as st
-from datetime import datetime, timedelta
-import pandas as pd
 
 # Streamlit Configurations
 st.set_page_config(page_title="KentBot", layout="wide")
@@ -9,29 +7,24 @@ st.set_page_config(page_title="KentBot", layout="wide")
 # Titles and subtitles
 st.title("Crypto Trading Bot ni Kent")
 
-# Define the list of cryptocurrencies
-cryptos = {
-    'Bitcoin': 'BTC-USD',
-    'Ethereum': 'ETH-USD',
-    'Solana': 'SOL-USD'
-}
-
-# Calculate the dates for the past 90 days
-end_date = datetime.now()
-start_date = end_date - timedelta(days=90)
-
-# Convert dates to string format for Yahoo Finance
-start_date_str = start_date.strftime('%Y-%m-%d')
-end_date_str = end_date.strftime('%Y-%m-%d')
-
-# Selectbox for choosing cryptocurrency
-selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
-
-# Get the ticker symbol based on selection
-ticker = cryptos[selected_crypto]
+# Defining ticker variables
+Bitcoin ='BTC-USD'
+Ethereum = 'ETH-USD'
+Solana = 'SOL-USD'
 
 # Accessing data from Yahoo Finance
-data = yf.download(ticker, start=start_date_str, end=end_date_str)
+BTC_Data = yf.Ticker(Bitcoin)
+ETH_Data = yf.Ticker(Ethereum)
+SOL_Data = yf.Ticker(Solana)
+
+# Fetch history data from Yahoo Finance
+BTCHis = BTC_Data.history(period="max")
+ETHHis = ETH_Data.history(period="max")
+SOLHis = SOL_Data.history(period="max")
+
+BTC = yf.download(Bitcoin, start="2024-03-01", end="2024-03-18")
+ETH = yf.download(Ethereum, start="2024-03-01", end="2024-03-18")
+SOL = yf.download(Solana, start="2024-03-01", end="2024-03-18")
 
 # Function to format the date column without time
 def format_date_column(data):
@@ -40,9 +33,10 @@ def format_date_column(data):
     data.set_index('Date', inplace=True)
     return data
 
-# Formatting date column
-data = format_date_column(data)
-
+# Formatting date columns for each cryptocurrency
+BTC = format_date_column(BTC)
+ETH = format_date_column(ETH)
+SOL = format_date_column(SOL)
 # Function to determine Buy or Sell based on the trend
 def determine_action(data):
     change = data['Close'].iloc[-1] - data['Close'].iloc[0]
@@ -53,21 +47,32 @@ def determine_action(data):
     else:
         return "<div style='border:1px solid black;padding:10px;color:blue;text-align:center;font-weight:bold'>Hold</div>"
 
-# Display selected cryptocurrency data
-st.write(f"{selected_crypto} ($)")
+# Bitcoin
+st.write("Bitcoin ($)")
 # Display dataframe
-st.table(data)
+st.table(BTC)
 # Display a chart
-st.line_chart(data['Close'])
-# Determine and display Buy/Sell action for selected cryptocurrency
-action = determine_action(data)
-st.markdown(action, unsafe_allow_html=True)
+st.line_chart(BTC['Close'])
+# Determine and display Buy/Sell action for Bitcoin
+btc_action = determine_action(BTC)
+st.markdown(btc_action, unsafe_allow_html=True)
 
-# Add a download button for the data
-csv = data.to_csv(index=True)
-st.download_button(
-    label=f"Download {selected_crypto} Data as CSV",
-    data=csv,
-    file_name=f"{selected_crypto}_data.csv",
-    mime="text/csv"
-)
+# Ethereum
+st.write("Ethereum ($)")
+# Display dataframe
+st.table(ETH)
+# Display a chart
+st.line_chart(ETH['Close'])
+# Determine and display Buy/Sell action for Ethereum
+eth_action = determine_action(ETH)
+st.markdown(eth_action, unsafe_allow_html=True)
+
+# Solana
+st.write("Solana ($)")
+# Display dataframe
+st.table(SOL)
+# Display a chart
+st.line_chart(SOL['Close'])
+# Determine and display Buy/Sell action for Litecoin
+ltc_action = determine_action(SOL)
+st.markdown(ltc_action, unsafe_allow_html=True)            update this code so that I will be seeing data from the past 60 days
