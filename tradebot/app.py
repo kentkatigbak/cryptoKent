@@ -78,7 +78,7 @@ stats = descriptive_statistics(data)
 # Display selected cryptocurrency data
 st.write(f"{selected_crypto} ($)")
 # Display dataframe
-st.table(data)
+st.table(data.T)
 # Display descriptive statistics
 st.write("Descriptive Statistics:")
 st.table(stats)
