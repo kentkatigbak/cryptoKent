@@ -78,11 +78,10 @@ stats = descriptive_statistics(data)
 # Display selected cryptocurrency data
 st.write(f"{selected_crypto} ($)")
 # Display dataframe
-data = data.transpose()
 st.table(data)
 # Display descriptive statistics
 st.write("Descriptive Statistics:")
-st.table(stats)
+st.table(stats.T)
 
 # Add a download button for the data
 csv = data.to_csv(index=True)
