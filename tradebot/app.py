@@ -69,7 +69,8 @@ def descriptive_statistics(df):
     
     # Transpose the DataFrame to match the format of the data table
     stats = stats.T
-    stats.columns = ['Value'] * len(stats.columns)  # Correctly set column names
+    stats = stats.applymap(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x)  # Format numerical values
+    stats.columns = ['Value']  # Set a single column name
     
     return stats
 
