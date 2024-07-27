@@ -16,19 +16,16 @@ cryptos = {
     'Solana': 'SOL-USD'
 }
 
-# Selectbox for choosing cryptocurrency
-selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
-
-# Input for number of days
-num_days = st.number_input("Enter the number of days for the data", min_value=1, max_value=365, value=90)
-
-# Calculate the dates based on user input
+# Calculate the dates for the past 90 days
 end_date = datetime.now()
-start_date = end_date - timedelta(days=num_days)
+start_date = end_date - timedelta(days=90)
 
 # Convert dates to string format for Yahoo Finance
 start_date_str = start_date.strftime('%Y-%m-%d')
 end_date_str = end_date.strftime('%Y-%m-%d')
+
+# Selectbox for choosing cryptocurrency
+selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
 
 # Get the ticker symbol based on selection
 ticker = cryptos[selected_crypto]
@@ -74,4 +71,3 @@ st.download_button(
     file_name=f"{selected_crypto}_data.csv",
     mime="text/csv"
 )
-
