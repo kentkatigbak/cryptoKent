@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Streamlit Configurations
-st.set_page_config(page_title="KentBot", layout="wide")
+st.set_page_config(page_title="KentTrades", layout="wide")
 
 # Titles and subtitles
-st.title("Crypto Trading Bot ni Kent")
+st.title("Kent Crypto Data Mining")
 
 # Define the list of cryptocurrencies
 cryptos = {
@@ -64,11 +64,12 @@ def descriptive_statistics(df):
     stats['Variance'] = df.var()
     stats['Std Dev'] = df.std()
     
-    # Date of max and min values
-    max_date = df.idxmax()
-    min_date = df.idxmin()
-    stats['Max Date'] = max_date
-    stats['Min Date'] = min_date
+    # Drop 'Min' and 'Max' columns from the final output
+    stats = stats.drop(['Min', 'Max'], axis=1)
+    
+    # Transpose the DataFrame to match the format of the data table
+    stats = stats.T
+    stats.columns = ['Value']  # Set column name for clarity
     
     return stats
 
