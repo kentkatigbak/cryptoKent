@@ -4,10 +4,26 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Streamlit Configurations
-st.set_page_config(page_title="KentTrades", layout="wide")
+st.set_page_config(page_title="KentTrades", layout="wide",page_icon="💰")
 
 # Titles and subtitles
-st.title("Kent's Crypto Data Mining")
+with st.sidebar:
+    st.write("")
+    st.image("KentTrades/myLogo.png")
+    st.title("")
+    st.title("")
+    st.title("")
+    st.title("")
+    st.write("____________________________________")
+    st.title("KENT KATIGBAK")
+    
+st.title("KENT TRADES")
+st.write("""
+        This is a crypto data mining app that collects actual data of selected crypto currencies
+        within the selected number of days in the past. It also displays the descriptive statistics
+        of the gathered data to make a quick and easy analysis.
+        """)
+st.write("____________________________________")
 
 # Define the list of cryptocurrencies
 cryptos = {
@@ -28,6 +44,10 @@ selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
 
 # Input for number of days
 num_days = st.number_input("Enter the number of days for the data", min_value=1, max_value=365, value=90)
+
+# View actual data or descriptive statistics
+view_select = st.selectbox("Select data to view", ["View Actual Data", "View Descriptive Statistics"])
+st.write("____________________________________")
 
 # Calculate the dates based on user input
 end_date = datetime.now()
@@ -75,19 +95,22 @@ def descriptive_statistics(df):
 # Calculate descriptive statistics for each column
 stats = descriptive_statistics(data)
 
-# Display selected cryptocurrency data
-st.write(f"{selected_crypto} ($)")
-# Display dataframe
-st.table(data)
-# Display descriptive statistics
-st.write("Descriptive Statistics:")
-st.table(stats.T)
-
-# Add a download button for the data
-csv = data.to_csv(index=True)
-st.download_button(
-    label=f"Download {selected_crypto} Data as CSV",
-    data=csv,
-    file_name=f"{selected_crypto}_data.csv",
-    mime="text/csv"
-)
+# View actual data
+if view_select == "View Actual Data":
+    # Add a download button for the data
+    csv = data.to_csv(index=True)
+    st.download_button(
+        label=f"Download {selected_crypto} Data as CSV",
+        data=csv,
+        file_name=f"{selected_crypto}_data.csv",
+        mime="text/csv"
+    )
+    # Display selected cryptocurrency data
+    st.write(f"{selected_crypto} ($)")
+    # Display dataframe
+    st.table(data)
+# View descriptive statistics
+if view_select == "View Descriptive Statistics":
+    # Display descriptive statistics
+    st.write("Descriptive Statistics:")
+    st.table(stats.T)
