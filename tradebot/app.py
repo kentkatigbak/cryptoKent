@@ -75,4 +75,4 @@ st.table(SOL)
 st.line_chart(SOL['Close'])
 # Determine and display Buy/Sell action for Litecoin
 ltc_action = determine_action(SOL)
-st.markdown(ltc_action, unsafe_allow_html=True)            update this code so that I will be seeing data from the past 60 days
+st.markdown(ltc_action, unsafe_allow_html=True) 
