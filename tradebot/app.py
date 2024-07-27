@@ -1,5 +1,7 @@
 import yfinance as yf
 import streamlit as st
+from datetime import datetime, timedelta
+import pandas as pd
 
 # Streamlit Configurations
 st.set_page_config(page_title="KentBot", layout="wide")
@@ -7,24 +9,39 @@ st.set_page_config(page_title="KentBot", layout="wide")
 # Titles and subtitles
 st.title("Crypto Trading Bot ni Kent")
 
-# Defining ticker variables
-Bitcoin ='BTC-USD'
-Ethereum = 'ETH-USD'
-Solana = 'SOL-USD'
+# Define the list of cryptocurrencies
+cryptos = {
+    'Bitcoin': 'BTC-USD',
+    'Ethereum': 'ETH-USD',
+    'Solana': 'SOL-USD',
+    'BNB': 'BNB-USD',
+    'XRP': 'XRP-USD',
+    'DOGE': 'DOGE-USD',
+    'TRX': 'TRX-USD',
+    'DOT': 'DOT-USD',
+    'ATOM': 'ATOM-USD',
+    'MKR': 'MKR-USD'
+}
+
+# Selectbox for choosing cryptocurrency
+selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
+
+# Input for number of days
+num_days = st.number_input("Enter the number of days for the data", min_value=1, max_value=365, value=90)
+
+# Calculate the dates based on user input
+end_date = datetime.now()
+start_date = end_date - timedelta(days=num_days)
+
+# Convert dates to string format for Yahoo Finance
+start_date_str = start_date.strftime('%Y-%m-%d')
+end_date_str = end_date.strftime('%Y-%m-%d')
+
+# Get the ticker symbol based on selection
+ticker = cryptos[selected_crypto]
 
 # Accessing data from Yahoo Finance
-BTC_Data = yf.Ticker(Bitcoin)
-ETH_Data = yf.Ticker(Ethereum)
-SOL_Data = yf.Ticker(Solana)
-
-# Fetch history data from Yahoo Finance
-BTCHis = BTC_Data.history(period="max")
-ETHHis = ETH_Data.history(period="max")
-SOLHis = SOL_Data.history(period="max")
-
-BTC = yf.download(Bitcoin, start="2024-03-01", end="2024-03-18")
-ETH = yf.download(Ethereum, start="2024-03-01", end="2024-03-18")
-SOL = yf.download(Solana, start="2024-03-01", end="2024-03-18")
+data = yf.download(ticker, start=start_date_str, end=end_date_str)
 
 # Function to format the date column without time
 def format_date_column(data):
@@ -33,46 +50,45 @@ def format_date_column(data):
     data.set_index('Date', inplace=True)
     return data
 
-# Formatting date columns for each cryptocurrency
-BTC = format_date_column(BTC)
-ETH = format_date_column(ETH)
-SOL = format_date_column(SOL)
-# Function to determine Buy or Sell based on the trend
-def determine_action(data):
-    change = data['Close'].iloc[-1] - data['Close'].iloc[0]
-    if change > 0:
-        return "<div style='border:1px solid black;padding:10px;color:green;text-align:center;font-weight:bold'>Sell</div>"
-    elif change < 0:
-        return "<div style='border:1px solid black;padding:10px;color:red;text-align:center;font-weight:bold'>Buy</div>"
-    else:
-        return "<div style='border:1px solid black;padding:10px;color:blue;text-align:center;font-weight:bold'>Hold</div>"
+# Formatting date column
+data = format_date_column(data)
 
-# Bitcoin
-st.write("Bitcoin ($)")
-# Display dataframe
-st.table(BTC)
-# Display a chart
-st.line_chart(BTC['Close'])
-# Determine and display Buy/Sell action for Bitcoin
-btc_action = determine_action(BTC)
-st.markdown(btc_action, unsafe_allow_html=True)
+# Descriptive statistics
+def descriptive_statistics(df):
+    stats = pd.DataFrame()
+    stats['Max'] = df.max()
+    stats['Min'] = df.min()
+    stats['Mean'] = df.mean()
+    stats['Median'] = df.median()
+    stats['Mode'] = df.mode().iloc[0]  # Mode may have multiple values, take the first
+    stats['Variance'] = df.var()
+    stats['Std Dev'] = df.std()
+    
+    # Drop 'Max Date' and 'Min Date' columns from the final output
+    stats = stats.drop(['Max Date', 'Min Date'], axis=1, errors='ignore')
+    
+    # Transpose the DataFrame to match the format of the data table
+    stats = stats.T
+    stats.columns = ['Value']  # Set a single column name for clarity
+    
+    return stats
 
-# Ethereum
-st.write("Ethereum ($)")
-# Display dataframe
-st.table(ETH)
-# Display a chart
-st.line_chart(ETH['Close'])
-# Determine and display Buy/Sell action for Ethereum
-eth_action = determine_action(ETH)
-st.markdown(eth_action, unsafe_allow_html=True)
+# Calculate descriptive statistics for each column
+stats = descriptive_statistics(data)
 
-# Solana
-st.write("Solana ($)")
+# Display selected cryptocurrency data
+st.write(f"{selected_crypto} ($)")
 # Display dataframe
-st.table(SOL)
-# Display a chart
-st.line_chart(SOL['Close'])
-# Determine and display Buy/Sell action for Litecoin
-ltc_action = determine_action(SOL)
-st.markdown(ltc_action, unsafe_allow_html=True) 
+st.table(data)
+# Display descriptive statistics
+st.write("Descriptive Statistics:")
+st.table(stats)
+
+# Add a download button for the data
+csv = data.to_csv(index=True)
+st.download_button(
+    label=f"Download {selected_crypto} Data as CSV",
+    data=csv,
+    file_name=f"{selected_crypto}_data.csv",
+    mime="text/csv"
+)
