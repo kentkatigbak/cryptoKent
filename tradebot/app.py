@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # Streamlit Configurations
-st.set_page_config(page_title="KentTrades", layout="wide")
+st.set_page_config(page_title="KentBot", layout="wide")
 
 # Titles and subtitles
-st.title("Kent Crypto Data Mining")
+st.title("Crypto Trading Bot ni Kent")
 
 # Define the list of cryptocurrencies
 cryptos = {
@@ -53,36 +53,10 @@ def format_date_column(data):
 # Formatting date column
 data = format_date_column(data)
 
-# Descriptive statistics
-def descriptive_statistics(df):
-    stats = pd.DataFrame()
-    stats['Max'] = df.max()
-    stats['Min'] = df.min()
-    stats['Mean'] = df.mean()
-    stats['Median'] = df.median()
-    stats['Mode'] = df.mode().iloc[0]  # Mode may have multiple values, take the first
-    stats['Variance'] = df.var()
-    stats['Std Dev'] = df.std()
-    
-    # Drop 'Min' and 'Max' columns from the final output
-    stats = stats.drop(['Min', 'Max'], axis=1)
-    
-    # Transpose the DataFrame to match the format of the data table
-    stats = stats.T
-    stats.columns = ['Value']  # Set column name for clarity
-    
-    return stats
-
-# Calculate descriptive statistics for each column
-stats = descriptive_statistics(data)
-
 # Display selected cryptocurrency data
 st.write(f"{selected_crypto} ($)")
 # Display dataframe
 st.table(data)
-# Display descriptive statistics
-st.write("Descriptive Statistics:")
-st.table(stats)
 
 # Add a download button for the data
 csv = data.to_csv(index=True)
