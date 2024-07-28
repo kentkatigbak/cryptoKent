@@ -36,7 +36,6 @@ with st.sidebar:
     st.title("")
     st.title("")
     st.title("")
-    st.title("")
     st.write("____________________________________")
     st.title("KENT KATIGBAK")
 
