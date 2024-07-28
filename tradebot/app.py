@@ -6,6 +6,16 @@ import pandas as pd
 # Streamlit Configurations
 st.set_page_config(page_title="KentTrades", layout="wide",page_icon="💰")
 
+# Remove header and footer
+hide_st_style = """
+                <style>
+                #MainMenu {visibility: hidden;}
+                footer {visibility: hidden;}
+                header {visibility: hidden;}
+                </style>
+                """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
 # Titles and subtitles
 with st.sidebar:
     st.write("")
