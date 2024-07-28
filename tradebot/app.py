@@ -118,9 +118,9 @@ if view_select == "View Actual Data":
     # Display selected cryptocurrency data
     st.write(f"{selected_crypto} ($)")
     # Display dataframe
-    st.table(data)
+    st.dataframe(data)
 # View descriptive statistics
 if view_select == "View Descriptive Statistics":
     # Display descriptive statistics
     st.write("Descriptive Statistics:")
-    st.table(stats.T)
+    st.dataframe(stats.T)
