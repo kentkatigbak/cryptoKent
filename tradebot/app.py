@@ -2,6 +2,8 @@ import yfinance as yf
 import streamlit as st
 from datetime import datetime, timedelta
 import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.statespace.sarimax import SARIMAX  # Updated import for SARIMA
 
 # Streamlit Configurations
 st.set_page_config(page_title="KentTrades", layout="wide", page_icon="💰")
@@ -30,7 +32,7 @@ st.markdown("""
 # Titles and subtitles
 with st.sidebar:
     st.write("")
-    st.image("tradebot/logoWhiteBG.png")
+    st.image("logoWhiteBG.png")
     st.title("")
     st.title("")
     st.title("")
@@ -66,8 +68,8 @@ selected_crypto = st.selectbox("Select a cryptocurrency", list(cryptos.keys()))
 # Input for number of days
 num_days = st.number_input("Enter the number of days for the data", min_value=1, max_value=365, value=90)
 
-# View actual data or descriptive statistics
-view_select = st.selectbox("Select data to view", ["View Actual Data", "View Descriptive Statistics"])
+# View actual data, descriptive statistics, or graphical analysis
+view_select = st.selectbox("Select data to view", ["View Actual Data", "View Descriptive Statistics", "View Graphical Analysis"])
 st.write("____________________________________")
 
 # Calculate the dates based on user input
@@ -175,3 +177,85 @@ else:
         # Display descriptive statistics
         stats = stats.round(2)
         st.dataframe(stats.T, use_container_width=True)
+
+    # View graphical analysis
+    if view_select == "View Graphical Analysis":
+        # Display the current price of the selected cryptocurrency
+        st.write(f"Current Price: {current_price_display}")
+        st.write(price_comparison)
+        
+        # Plot High, Low, Open, Close, and Current Price
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        # Plot High and Low
+        ax.plot(data.index, data['High'], label='High', color='blue')
+        ax.plot(data.index, data['Low'], label='Low', color='violet')
+        
+        # Plot Open and Close
+        ax.plot(data.index, data['Open'], label='Open', color='yellow')
+        ax.plot(data.index, data['Close'], label='Close', color='red')
+        
+        # Plot Current Price as a horizontal line
+        if current_price is not None:
+            ax.axhline(y=current_price, color='green', linestyle='--', label='Current Price')
+
+        # Set titles and labels
+        ax.set_title(f"{selected_crypto} Prices")
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Price ($)')
+        ax.legend()
+        
+        # Display the initial plot in Streamlit
+        st.pyplot(fig)
+        
+        # Prompt for forecast days after the initial plot
+        st.write("Forecast Analysis:")
+        forecast_days = st.number_input("Enter the number of days for forecast", min_value=1, max_value=365, value=30)
+        
+        # Forecasting using SARIMA
+        def forecast_sarima(series, forecast_days):
+            # Seasonal parameters
+            seasonality = 7  # Weekly seasonality, adjust as needed
+            model = SARIMAX(series, order=(5, 1, 0), seasonal_order=(1, 1, 1, seasonality))
+            model_fit = model.fit(disp=False)
+            forecast = model_fit.get_forecast(steps=forecast_days)
+            forecast_index = pd.date_range(start=data.index[-1] + timedelta(days=1), periods=forecast_days, freq='D')
+            forecast_series = pd.Series(forecast.predicted_mean, index=forecast_index)
+            conf_int = forecast.conf_int()
+            return forecast_series, conf_int
+
+        # Perform forecasts only if forecast_days is a valid number
+        if forecast_days > 0:
+            # Forecast for Open, High, Close, and Low
+            forecast_open, conf_int_open = forecast_sarima(data['Open'], forecast_days)
+            forecast_high, conf_int_high = forecast_sarima(data['High'], forecast_days)
+            forecast_low, conf_int_low = forecast_sarima(data['Low'], forecast_days)
+            forecast_close, conf_int_close = forecast_sarima(data['Close'], forecast_days)
+
+            # Plot historical and forecasted data
+            fig, ax = plt.subplots(figsize=(12, 6))
+            
+            # Plot Historical Data
+            ax.plot(data.index, data['Open'], label='Historical Open', color='orange')
+            ax.plot(data.index, data['High'], label='Historical High', color='blue')
+            ax.plot(data.index, data['Low'], label='Historical Low', color='violet')
+            ax.plot(data.index, data['Close'], label='Historical Close', color='red')
+            
+            # Plot Forecast Data
+            ax.plot(forecast_open.index, forecast_open, label='Forecast Open', color='orange', linestyle='--')
+            ax.plot(forecast_high.index, forecast_high, label='Forecast High', color='blue', linestyle='--')
+            ax.plot(forecast_low.index, forecast_low, label='Forecast Low', color='violet', linestyle='--')
+            ax.plot(forecast_close.index, forecast_close, label='Forecast Close', color='red', linestyle='--')
+
+            # Plot Current Price as a horizontal line
+            if current_price is not None:
+                ax.axhline(y=current_price, color='green', linestyle='--', label='Current Price')
+            
+            # Set titles and labels
+            ax.set_title(f"{selected_crypto} Forecast")
+            ax.set_xlabel('Date')
+            ax.set_ylabel('Price ($)')
+            ax.legend()
+            
+            # Display the forecast plot in Streamlit
+            st.pyplot(fig)
