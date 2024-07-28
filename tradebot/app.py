@@ -32,7 +32,7 @@ st.markdown("""
 # Titles and subtitles
 with st.sidebar:
     st.write("")
-    st.image("logoWhiteBG.png")
+    st.image("tradebot/logoWhiteBG.png")
     st.title("")
     st.title("")
     st.title("")
