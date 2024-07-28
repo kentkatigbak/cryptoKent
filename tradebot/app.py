@@ -129,9 +129,11 @@ if view_select == "View Actual Data":
     # Display selected cryptocurrency data
     st.write(f"{selected_crypto} ($)")
     # Display dataframe
+    data = data.round(2)
     st.dataframe(data, use_container_width=True)
 # View descriptive statistics
 if view_select == "View Descriptive Statistics":
     # Display descriptive statistics
     st.write("Descriptive Statistics:")
+    stats = stats.round(2)
     st.dataframe(stats.T, use_container_width=True)
